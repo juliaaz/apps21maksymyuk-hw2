@@ -1,72 +1,112 @@
 package ua.edu.ucu.collections.immutable;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 public final class ImmutableArrayList implements ImmutableList {
-    public ImmutableArrayList(Object[] elements) {
-    }
+    private Object[] elems;
 
     public ImmutableArrayList() {
+        elems = new Object[] {};
+    }
+
+    public ImmutableArrayList(Object[] elems) {
+        this.elems = elems.clone();  // Clone in case the user will want to
+        // instantiate the array
     }
 
     @Override
-    public ImmutableList add(Object e) {
-        return null;
+    public ImmutableArrayList add(Object e) {
+        return addAll(elems.length, new Object[] {e});
     }
 
     @Override
-    public ImmutableList add(int index, Object e) {
-        return null;
+    public ImmutableArrayList add(int index, Object e) {
+        return addAll(index, new Object[] {e});
     }
 
     @Override
-    public ImmutableList addAll(Object[] c) {
-        return null;
+    public ImmutableArrayList addAll(Object[] c) {
+        return addAll(elems.length, c);
     }
 
     @Override
-    public ImmutableList addAll(int index, Object[] c) {
-        return null;
+    public ImmutableArrayList addAll(int index, Object[] c) {
+        if (index < 0 || index > elems.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        Object[] newElems = new Object[elems.length+c.length];
+        System.arraycopy(elems, 0, newElems, 0, index);
+        System.arraycopy(elems, index, newElems, index+c.length,
+                elems.length-index);
+        System.arraycopy(c, 0, newElems, index, c.length);
+        return new ImmutableArrayList(newElems);
     }
 
     @Override
     public Object get(int index) {
-        return null;
+        if (index < 0 || index >= elems.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        return elems[index];
     }
 
     @Override
-    public ImmutableList remove(int index) {
-        return null;
+    public ImmutableArrayList remove(int index) {
+        if (index < 0 || index >= elems.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        Object[] newElems = new Object[elems.length-1];
+        System.arraycopy(elems, 0, newElems, 0, index);
+        /* If the element is not the last */
+        if (index != elems.length-1) {
+            System.arraycopy(elems, index+1, newElems, index,
+                    elems.length-index-1);
+        }
+        return new ImmutableArrayList(newElems);
     }
 
     @Override
-    public ImmutableList set(int index, Object e) {
-        return null;
+    public ImmutableArrayList set(int index, Object e) {
+        if (index < 0 || index >= elems.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        Object[] newElems = elems.clone();
+        newElems[index] = e;
+        return new ImmutableArrayList(newElems);
     }
 
     @Override
     public int indexOf(Object e) {
-        return 0;
+        for (int i = 0; i < elems.length; i++) {
+            if (elems[i].equals(e)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public int size() {
-        return 0;
+        return elems.length;
     }
 
     @Override
-    public ImmutableList clear() {
-        return null;
+    public ImmutableArrayList clear() {
+        return new ImmutableArrayList();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return elems.length == 0;
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return elems.clone();
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(elems);
     }
 }
