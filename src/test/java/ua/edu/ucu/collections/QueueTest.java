@@ -2,29 +2,62 @@ package ua.edu.ucu.collections;
 
 import org.junit.Before;
 import org.junit.Test;
+import ua.edu.ucu.collections.immutable.ImmutableLinkedList;
+
 import static org.junit.Assert.*;
 
 public class QueueTest {
-    Queue queue;
+    private Queue queue;
+    private Queue emptyQueue;
+
     @Before
     public void setUp() {
-        queue = new Queue();
-        queue.enqueue(1);
-        queue.enqueue(2);
-        queue.enqueue(3);
-        queue.enqueue(4);
+        Object[] array = {1, 3, 5, 7};
+        ImmutableLinkedList linkedList = new ImmutableLinkedList(array);
+        this.queue = new Queue(linkedList);
+        this.emptyQueue = new Queue(new ImmutableLinkedList());
     }
 
     @Test
-    public void peek() {
-        assertEquals(1, queue.dequeue());
-        assertEquals(2, queue.dequeue());
-        assertEquals(3, queue.dequeue());
+    public void testPeek() {
+        Object expResult = 1;
+        Object actualResult = queue.peek();
+
+        assertEquals(expResult, actualResult);
     }
 
     @Test
-    public void dequeue() {
-        assertEquals(1, queue.peek());
+    public void testPeekEmpty() {
+        assertNull(emptyQueue.peek());
+    }
+
+    @Test
+    public void testDequeue() {
+        Object expResult = 1;
+        Object actualResult = queue.dequeue();
+
+        assertEquals(expResult, actualResult);
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void testDequeueEmpty() {
+        assertNull(emptyQueue.dequeue());
+    }
+
+    @Test
+    public void testEnqueue() {
+        Object[] expResult = {1, 3, 5, 7, 9};
+        queue.enqueue(9);
+
+        assertArrayEquals(expResult, queue.getQueue().toArray());
+    }
+
+    @Test
+    public void testEnqueueEmpty() {
+        Object[] expResult = {9};
+        emptyQueue.enqueue(9);
+
+        assertArrayEquals(expResult, emptyQueue.getQueue().toArray());
     }
 
 }
